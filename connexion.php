@@ -3,6 +3,10 @@
 
 require_once "inc/init.php";
 
+       //RESTRICTION D'ACCES
+      
+
+
     //Gestion de la connection
         if (isset($_POST['connect'])) {
             //securisation des données
@@ -18,7 +22,9 @@ require_once "inc/init.php";
                     
 
                     if (password_verify($_POST['mdp'], $membre['mdp'])){
-                        $_SESSION['membre']=$membre;
+                        $_SESSION['membre']= $membre;
+
+                        $_SESSION['success']['connect'] = "Bravo vous êtes connecté";
                         header("location:profil.php");
                         exit;
                     }else{
