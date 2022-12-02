@@ -1,25 +1,31 @@
-<?php
+<?php 
 
 require_once "inc/init.php";
 
-if (!isConnected()) {
-    header("location:connexion.php");//absolumente etre tout en haut de la page pas d'appel html avant
-    exit ;
+if( !isConnected() ){
+    header("location:connexion.php");
+    exit;
 }
 
-debug($_SESSION);
-$title ="profil";
+$commandes = getCommandeByUser($_SESSION['membre']['id_membre']);
+debug($commandes);
 
-require_once "inc/header.php";
+$title = "Profil";
+require_once RACINE_SITE . "inc/header.php";
 
-if ( isset($_SESSION['success']['connect'])) {
+if( isset($_SESSION['success']['connect']) ){
     echo '<div class="alert alert-success col-md-6 mx-auto text-center">';
         echo $_SESSION['success']['connect'];
         unset($_SESSION['success']);
     echo '</div>';
 }
+if( isset($_SESSION['success']) ){
+    echo '<div class="alert alert-success col-md-6 mx-auto text-center">';
+        echo $_SESSION['success'];
+        unset($_SESSION['success']);
+    echo '</div>';
+}
 ?>
-
 
 <div class="row d-flex justify-content-center mt-md-3">
     <div class="col-xl-8 col-md-12">
@@ -30,7 +36,7 @@ if ( isset($_SESSION['success']['connect'])) {
                         <div class="m-b-25">
                             <img src="https://img.icons8.com/bubbles/100/000000/user.png" class="img-radius" alt="User-Profile-Image">
                         </div>
-                        <h6 class="f-w-600"><?= $_SESSION['membre']['nom'] ."<br>"?><?= $_SESSION['membre']['prenom'] ?></h6>
+                        <h6 class="f-w-600"><?= $_SESSION['membre']['prenom'] . " " . $_SESSION['membre']['nom'] ?></h6>
                         
                         <p><?= ucfirst($_SESSION['membre']['statut']) ?></p>
                         <i class=" mdi mdi-square-edit-outline feather icon-edit m-t-10 f-16"></i>
@@ -73,6 +79,5 @@ if ( isset($_SESSION['success']['connect'])) {
     </div>
 </div>
 
-<?php 
-require_once "inc/footer.php";
-?>
+<?php
+require_once RACINE_SITE . "inc/footer.php";

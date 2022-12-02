@@ -195,14 +195,14 @@ function formData($data){
         global $bdd;
                 
         // $requete = $bdd->query("SELECT * FROM vehicule");
-        $requete = $bdd->query("SELECT vehicule.*, agence.titre_agence
+        $requete = $bdd->query("SELECT *
                                 FROM vehicule 
                                 LEFT JOIN agence ON vehicule.id_agence = agence.id_agence");
         $vehicules = $requete->fetchAll();
 
         return $vehicules;
 
-        return $bdd->query("SELECT * FROM vehicule LEFT JOIN agence ON vehicule.id_agence = agence.id_agence")->fetchAll();
+        return $bdd->query("SELECT vehicule.*, agence.titre_agence FROM vehicule LEFT JOIN agence ON vehicule.id_agence = agence.id_agence")->fetchAll();
     }
 
     function getVehiculeById($id_vehicule){
@@ -211,6 +211,68 @@ function formData($data){
         $requete = $bdd->prepare("SELECT * FROM vehicule WHERE id_vehicule = :id_vehicule");
         $requete->execute(['id_vehicule' => $id_vehicule]);
         return $requete->fetch();
+
+    }
+
+    function getVehiculesByCity($ville){
+        global $bdd;
+
+        $requete = $bdd->prepare("SELECT * 
+                                FROM vehicule 
+                                LEFT JOIN agence ON vehicule.id_agence = agence.id_agence
+                                WHERE ville = :ville");
+        $requete->execute(['ville' => $ville]);
+        return $requete->fetchAll();
+
+    }
+
+    function updateVehicule($id_vehicule, $data){
+        global $bdd;
+        
+        $requete = $bdd->prepare("UPDATE vehicule SET titre_vehicule = :titre_vehicule, marque = :marque, modele = :modele, description_vehicule = :description_vehicule, photo_vehicule = :photo_vehicule, prix_journalier = :prix_journalier, id_agence = :id_agence WHERE id_vehicule = :id_vehicule");
+
+        return $requete->execute([
+            'titre_vehicule' => $data['titre_vehicule'],    
+            'marque' => $data['marque'],
+            'modele' => $data['modele'],
+            'description_vehicule' => $data['description_vehicule'],
+            'photo_vehicule' => $data['photo_vehicule'],
+            'prix_journalier' => $data['prix_journalier'],
+            'id_agence' => $data['id_agence'],
+            'id_vehicule' => $id_vehicule
+        ]);
+    }
+
+//
+
+// FONCTIONS COMMANDES
+    function addCommande($data){
+
+        global $bdd;
+
+        $requete = $bdd->prepare("INSERT INTO commande VALUES (NULL, :id_membre, :id_vehicule, :date_heure_depart, :date_heure_fin, :prix_total, NOW() )");
+        
+        return $requete->execute([
+            'id_membre' => $data['id_membre'],
+            'id_vehicule' => $data['id_vehicule'],
+            'date_heure_depart' => $data['date_heure_depart'],
+            'date_heure_fin' => $data['date_heure_fin'],
+            'prix_total' => $data['prix_total']
+        ]);
+
+    }
+
+    function getCommandeByUser($id_membre){
+
+        global $bdd;
+
+        $requete = $bdd->prepare("SELECT * FROM commande 
+                                    LEFT JOIN vehicule ON vehicule.id_vehicule = commande.id_vehicule
+                                    INNER JOIN agence ON agence.id_agence = vehicule.id_agence
+                                    LEFT JOIN membre ON membre.id_membre = commande.id_membre
+                                    WHERE membre.id_membre = :id_membre"); 
+        $requete->execute(['id_membre' => $id_membre]);
+        return $requete->fetchAll();
 
     }
 

@@ -21,4 +21,4 @@
 </head>
 <body>
 
-<?php $title !="Acceuil" ? require_once RACINE_SITE."inc/menu.php":""?>
+<?php $title !="Acceuil" ? require_once RACINE_SITE."inc/menu.php" :""?>
